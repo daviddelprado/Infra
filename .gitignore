@@ -1,0 +1,7 @@
+/.terraform
+/.terraform.lock.hcl
+/hpc-key.pem
+/hpc.pem.old
+/job-pi.sl
+/terraform.tfstate
+/terraform.tfstate.backup
