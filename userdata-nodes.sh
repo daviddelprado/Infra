@@ -1,3 +1,6 @@
+#!/bin/bash
+# Use this for your user data (script from top to bottom)
+# install and configure compute node
 apt update -y && apt install munge -y && apt install vim -y && apt install build-essential -y && apt install git -y && apt-get install mariadb-server -y && apt install wget -y
 DEBIAN_FRONTEND=noninteractive
 apt install slurmd slurm-client -y
