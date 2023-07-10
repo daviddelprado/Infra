@@ -50,6 +50,22 @@ EOF
 
 sed -i "s/REPLACE_MASTER/$(hostname -s)/g" /etc/slurm-llnl/slurm.conf
 
+cat << 'EOF' > /etc/slurm-llnl/nodes.conf
+NodeName=REPLACE_NODE REPLACE_CPU State=UNKNOWN
+EOF
+
+cat << 'EOF' > /etc/slurm-llnl/partitions.conf
+PartitionName=team4 Nodes=REPLACE_NODE Default=YES MaxTime=INFINITE State=UP
+EOF
+
+sed -i "s/REPLACE_CPU/CPUs=$(nproc)/g" /etc/slurm-llnl/nodes.conf
+sed -i "s/REPLACE_NODE/$(hostname -s)/g" /etc/slurm-llnl/nodes.conf
+sed -i "s/REPLACE_NODE/$(hostname -s)/g" /etc/slurm-llnl/partitions.conf
+
+echo ${aws_instance.master.private_ip} > /home/ipmaster.txt
+echo "hola" > /home/hola.txt
+
+
 mkdir -p /shared
 chown nobody:nogroup /shared
 chmod 777 /shared
@@ -57,10 +73,10 @@ apt install nfs-kernel-server -y
 echo "/shared 172.31.1.0/24(rw,sync,no_subtree_check)" >> /etc/exports
 exportfs -a
 
-
 mkdir /shared/config
 cp /etc/slurm-llnl/slurm.conf /shared/config
 cp /etc/munge/munge.key /shared/config
 
 service munge start
 service slurmctld start
+service slurmd start

@@ -14,16 +14,14 @@ apt update -y && apt install nodejs -y && npm install -g configurable-http-proxy
 apt install libopenmpi-dev -y && pip3 install mpi4py && pip3 install jupyterlab_slurm
 pip install markupsafe==2.0.1
 
-
 apt install nfs-common -y
 mkdir -p /shared
-echo "172.31.0.104:/shared /shared nfs defaults 0 0" /etc/fstab
+echo "172.31.0.100:/shared /shared nfs defaults 0 0" >> /etc/fstab
 mount -a
 cp /shared/config/slurm.conf /etc/slurm-llnl/slurm.conf
 cp /shared/config/munge.key /etc/munge/munge.key
 chown munge.munge /etc/munge/munge.key
 service munge start
-
 
 jupyter lab --no-browser --allow-root --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''
 

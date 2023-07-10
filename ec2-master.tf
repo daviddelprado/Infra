@@ -32,28 +32,34 @@ resource "aws_key_pair" "kp" {
   }
 }
 
-#resource "aws_network_interface" "lanmaster" {
-#  subnet_id = "${aws_subnet.main_subnet_hpc.id}"
-#  private_ips = ["172.31.0.100"]
+resource "aws_network_interface" "lanmaster" {
+  subnet_id   = "${aws_subnet.main_subnet_hpc.id}"
+  private_ips = ["172.31.0.100"]
 
-#}
-
+  tags = {
+    Name = "private master network"
+  }
+}
 
 resource "aws_instance" "master" {
 	ami           = data.aws_ami.master.id
 	instance_type = "t3.large"
 		
-	subnet_id = "${aws_subnet.main_subnet_hpc.id}"
-	vpc_security_group_ids = ["${aws_security_group.SG_hpc.id}"]
+	#subnet_id = aws_subnet.main_subnet_hpc.id
+	#vpc_security_group_ids = ["${aws_security_group.SG_hpc.id}"]
 	key_name  = aws_key_pair.kp.key_name
- # network_interface {
- #    network_interface_id = "${aws_network_interface.lanmaster.id}"
- #    device_index = 0
- # }
+  network_interface {
+     network_interface_id = aws_network_interface.lanmaster.id
+     device_index = 0
+  }
 
 	user_data = file("userdata-master.sh")
 
 	tags = {
         Name = "master"
   	}
+}
+
+output "master_public_ip" {
+  value = ["${aws_instance.master.*.public_ip}"]
 }

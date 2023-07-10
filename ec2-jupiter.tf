@@ -29,3 +29,6 @@ resource "aws_instance" "jupiter" {
         Name = "jupiter"
   	}
 }
+output "jupiter_ip" {
+  value = ["${aws_instance.jupiter.*.public_ip}"]
+}
