@@ -61,11 +61,11 @@ EOF
 sed -i "s/REPLACE_MASTER/$(hostname -s)/g" /etc/slurm-llnl/slurm.conf
 
 cat << 'EOF' > /etc/slurm-llnl/nodes.conf
-NodeName=REPLACE_NODE REPLACE_CPU State=UNKNOWN
+NodeName=ip-172-31-0-100,ip-172-31-0-101 REPLACE_CPU State=UNKNOWN
 EOF
 
 cat << 'EOF' > /etc/slurm-llnl/partitions.conf
-PartitionName=team4 Nodes=REPLACE_NODE Default=YES MaxTime=INFINITE State=UP
+PartitionName=team4 Nodes=ip-172-31-0-100,ip-172-31-0-101 Default=YES MaxTime=INFINITE State=UP
 EOF
 
 sed -i "s/REPLACE_CPU/CPUs=$(nproc)/g" /etc/slurm-llnl/nodes.conf
@@ -77,6 +77,7 @@ cp /etc/slurm-llnl/slurm.conf /shared/config
 cp /etc/slurm-llnl/nodes.conf /shared/config
 cp /etc/slurm-llnl/partitions.conf /shared/config
 cp /etc/munge/munge.key /shared/config
+chmod 444 /shared/config/munge.key
 
 service munge start
 service slurmctld start
@@ -85,9 +86,8 @@ service slurmd start
 mkdir /shared/software
 wget -P /shared/software -O /shared/software/pi.tar.xz http://www.numberworld.org/y-cruncher/y-cruncher%20v0.7.10.9513-static.tar.xz
 tar -xvf /shared/software/pi.tar.xz
-mv /shared/software/y-cruncher\ v0.7.10.9513-static /shared/software/pi
 
-cat << 'EOF' > /shared/software/pi/job-pi.sl.conf
+cat << 'EOF' > /shared/software/job-pi.sl
 #!/bin/bash
 #SBATCH -J PI-1CPU
 #SBATCH --time=01:00:00         # Walltime

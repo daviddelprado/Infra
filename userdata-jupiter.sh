@@ -1,11 +1,9 @@
 #!/bin/bash
 # Use this for your user data (script from top to bottom)
 # install and configure jupite node
-
 apt update -y && apt install munge -y && apt install vim -y && apt install build-essential -y && apt install git -y && apt-get install mariadb-server -y && apt install wget -y
-
 DEBIAN_FRONTEND=noninteractive
-apt install slurm-client -y
+apt install slurmd slurm-client -y
 apt install curl dirmngr apt-transport-https lsb-release ca-certificates -y
 curl -sL https://deb.nodesource.com/setup_12.x | bash -
 apt install  -y && apt install python3.9 python3-pip -y && useradd -m admin -s /usr/bin/bash -d /home/admin && echo "admin:admin" | chpasswd && adduser admin sudo && echo "admin     ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -24,8 +22,9 @@ cp /shared/config/partitions.conf /etc/slurm-llnl/partitions.conf
 cp /shared/config/munge.key /etc/munge/munge.key
 chown munge.munge /etc/munge/munge.key
 service munge start
+service slurmd start
 
-jupyter lab --no-browser --allow-root --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password=''
+jupyter lab --no-browser --allow-root --ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.password='' --notebook-dir=/shared/  --preferred-dir /shared/
 
 
 

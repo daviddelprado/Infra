@@ -37,7 +37,7 @@ resource "aws_network_interface" "lanmaster" {
   security_groups = [aws_security_group.SG_hpc.id]
 
   tags = {
-    Name = "private master network"
+    Name = "private master static ip"
   }
 }
 
