@@ -14,6 +14,8 @@ data "aws_ami" "nodes" {
   owners = ["099720109477"] # Canonical
 }
 
+
+
 resource "aws_instance" "nodes" {
 	depends_on = [aws_nat_gateway.nat_gateway,aws_instance.master]
   ami           = data.aws_ami.nodes.id
@@ -23,7 +25,7 @@ resource "aws_instance" "nodes" {
 	subnet_id = "${aws_subnet.main_subnet_nodes.id}"
 	vpc_security_group_ids = ["${aws_security_group.SG_hpc.id}"]
 	key_name  = aws_key_pair.kp.key_name
-
+ 
 	user_data = file("userdata-nodes.sh")
 
 	tags = {

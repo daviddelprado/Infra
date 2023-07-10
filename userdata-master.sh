@@ -4,9 +4,10 @@
 
 mkdir -p /shared/software
 chown nobody:nogroup /shared -R
-chmod 777 /shared
+chmod 777 /shared -R
 apt install nfs-kernel-server -y
 echo "/shared 172.31.1.0/24(rw,sync,no_subtree_check)" >> /etc/exports
+echo "/shared 172.31.0.0/24(rw,sync,no_subtree_check)" >> /etc/exports
 exportfs -a
 
 
@@ -73,6 +74,8 @@ sed -i "s/REPLACE_NODE/$(hostname -s)/g" /etc/slurm-llnl/partitions.conf
 
 mkdir /shared/config
 cp /etc/slurm-llnl/slurm.conf /shared/config
+cp /etc/slurm-llnl/nodes.conf /shared/config
+cp /etc/slurm-llnl/partitions.conf /shared/config
 cp /etc/munge/munge.key /shared/config
 
 service munge start
@@ -80,9 +83,8 @@ service slurmctld start
 service slurmd start
 
 mkdir /shared/software
-wget -P /shared/software -O pi.tar.xz http://www.numberworld.org/y-cruncher/y-cruncher%20v0.7.10.9513-static.tar.xz
+wget -P /shared/software -O /shared/software/pi.tar.xz http://www.numberworld.org/y-cruncher/y-cruncher%20v0.7.10.9513-static.tar.xz
 tar -xvf /shared/software/pi.tar.xz
-rm -rf pi.tar.xz
 mv /shared/software/y-cruncher\ v0.7.10.9513-static /shared/software/pi
 
 cat << 'EOF' > /shared/software/pi/job-pi.sl.conf

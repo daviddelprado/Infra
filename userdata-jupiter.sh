@@ -19,6 +19,8 @@ mkdir -p /shared
 echo "172.31.0.100:/shared /shared nfs defaults 0 0" >> /etc/fstab
 mount -a
 cp /shared/config/slurm.conf /etc/slurm-llnl/slurm.conf
+cp /shared/config/nodes.conf /etc/slurm-llnl/nodes.conf
+cp /shared/config/partitions.conf /etc/slurm-llnl/partitions.conf
 cp /shared/config/munge.key /etc/munge/munge.key
 chown munge.munge /etc/munge/munge.key
 service munge start
