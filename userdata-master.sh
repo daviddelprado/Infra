@@ -1,6 +1,15 @@
 #!/bin/bash
 # Use this for your user data (script from top to bottom)
 # install and configure master node
+
+mkdir -p /shared/software
+chown nobody:nogroup /shared -R
+chmod 777 /shared
+apt install nfs-kernel-server -y
+echo "/shared 172.31.1.0/24(rw,sync,no_subtree_check)" >> /etc/exports
+exportfs -a
+
+
 apt update -y && apt install munge -y && apt install vim -y && apt install build-essential -y && apt install git -y && apt-get install mariadb-server -y && apt install wget -y
 DEBIAN_FRONTEND=noninteractive
 apt install slurmd slurm-client slurmctld -y 
@@ -62,17 +71,6 @@ sed -i "s/REPLACE_CPU/CPUs=$(nproc)/g" /etc/slurm-llnl/nodes.conf
 sed -i "s/REPLACE_NODE/$(hostname -s)/g" /etc/slurm-llnl/nodes.conf
 sed -i "s/REPLACE_NODE/$(hostname -s)/g" /etc/slurm-llnl/partitions.conf
 
-echo ${aws_instance.master.private_ip} > /home/ipmaster.txt
-echo "hola" > /home/hola.txt
-
-
-mkdir -p /shared
-chown nobody:nogroup /shared
-chmod 777 /shared
-apt install nfs-kernel-server -y
-echo "/shared 172.31.1.0/24(rw,sync,no_subtree_check)" >> /etc/exports
-exportfs -a
-
 mkdir /shared/config
 cp /etc/slurm-llnl/slurm.conf /shared/config
 cp /etc/munge/munge.key /shared/config
@@ -80,3 +78,20 @@ cp /etc/munge/munge.key /shared/config
 service munge start
 service slurmctld start
 service slurmd start
+
+mkdir /shared/software
+wget -P /shared/software -O pi.tar.xz http://www.numberworld.org/y-cruncher/y-cruncher%20v0.7.10.9513-static.tar.xz
+tar -xvf /shared/software/pi.tar.xz
+rm -rf pi.tar.xz
+mv /shared/software/y-cruncher\ v0.7.10.9513-static /shared/software/pi
+
+cat << 'EOF' > /shared/software/pi/job-pi.sl.conf
+#!/bin/bash
+#SBATCH -J PI-1CPU
+#SBATCH --time=01:00:00         # Walltime
+#SBATCH --mem-per-cpu=1         # memory/cpu
+#SBATCH --ntasks=1      # MPI processes
+#SBATCH --output=1cpuslurm-%j.out
+
+./y-cruncher skip-warnings bench 100m
+EOF

@@ -14,8 +14,8 @@ data "aws_ami" "jupiter" {
   owners = ["099720109477"] # Canonical
 }
 
-
 resource "aws_instance" "jupiter" {
+  depends_on = [aws_nat_gateway.nat_gateway,aws_instance.master]
 	ami           = data.aws_ami.jupiter.id
 	instance_type = "t3.large"
 		

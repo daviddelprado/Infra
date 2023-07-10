@@ -15,7 +15,6 @@ data "aws_ami" "master" {
 }
 
 
-
 resource "tls_private_key" "pk" {
   algorithm     = "RSA"
   rsa_bits      = 4096
@@ -35,6 +34,7 @@ resource "aws_key_pair" "kp" {
 resource "aws_network_interface" "lanmaster" {
   subnet_id   = "${aws_subnet.main_subnet_hpc.id}"
   private_ips = ["172.31.0.100"]
+  security_groups = [aws_security_group.SG_hpc.id]
 
   tags = {
     Name = "private master network"

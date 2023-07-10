@@ -14,9 +14,8 @@ data "aws_ami" "nodes" {
   owners = ["099720109477"] # Canonical
 }
 
-
 resource "aws_instance" "nodes" {
-	depends_on = [aws_nat_gateway.nat_gateway]
+	depends_on = [aws_nat_gateway.nat_gateway,aws_instance.master]
   ami           = data.aws_ami.nodes.id
 	instance_type = "t3.large"
   count         = var.nodes_count
