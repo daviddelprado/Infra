@@ -61,7 +61,7 @@ EOF
 sed -i "s/REPLACE_MASTER/$(hostname -s)/g" /etc/slurm-llnl/slurm.conf
 
 cat << 'EOF' > /etc/slurm-llnl/nodes.conf
-NodeName=ip-172-31-0-100,ip-172-31-0-101 REPLACE_CPU State=UNKNOWN
+NodeName=ip-172-31-0-100,ip-172-31-0-101 REPLACE_CPU RealMemory=7000 State=UNKNOWN
 EOF
 
 cat << 'EOF' > /etc/slurm-llnl/partitions.conf
