@@ -26,7 +26,7 @@ resource "aws_subnet" "main_subnet_hpc" {
 
 resource "aws_subnet" "main_subnet_nodes" {
         vpc_id = "${aws_vpc.main_vpc_hpc.id}"
-        cidr_block = "172.31.1.0/24"
+        cidr_block = "172.31.1.0/28"
         availability_zone = "us-east-1b"
 
         tags = {

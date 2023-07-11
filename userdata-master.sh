@@ -62,10 +62,11 @@ sed -i "s/REPLACE_MASTER/$(hostname -s)/g" /etc/slurm-llnl/slurm.conf
 
 cat << 'EOF' > /etc/slurm-llnl/nodes.conf
 NodeName=ip-172-31-0-100,ip-172-31-0-101 REPLACE_CPU RealMemory=7000 State=UNKNOWN
+NodeName=ip-172-31-1-[2-16] REPLACE_CPU RealMemory=7000 State=UNKNOWN
 EOF
 
 cat << 'EOF' > /etc/slurm-llnl/partitions.conf
-PartitionName=team4 Nodes=ip-172-31-0-100,ip-172-31-0-101 Default=YES MaxTime=INFINITE State=UP
+PartitionName=team4 Nodes=ip-172-31-0-100,ip-172-31-0-101,ip-172-31-1-[2-16] Default=YES MaxTime=INFINITE State=UP
 EOF
 
 sed -i "s/REPLACE_CPU/CPUs=$(nproc)/g" /etc/slurm-llnl/nodes.conf
@@ -87,13 +88,24 @@ mkdir /shared/software
 wget -P /shared/software -O /shared/software/pi.tar.xz http://www.numberworld.org/y-cruncher/y-cruncher%20v0.7.10.9513-static.tar.xz
 tar -xvf /shared/software/pi.tar.xz
 
-cat << 'EOF' > /shared/software/job-pi.sl
+cat << 'EOF' > /shared/software/job1CPU-pi.sl
 #!/bin/bash
 #SBATCH -J PI-1CPU
 #SBATCH --time=01:00:00         # Walltime
 #SBATCH --mem-per-cpu=1         # memory/cpu
 #SBATCH --ntasks=1      # MPI processes
 #SBATCH --output=1cpuslurm-%j.out
+
+./y-cruncher skip-warnings bench 100m
+EOF
+
+cat << 'EOF' > /shared/software/job4CPU-pi.sl
+#!/bin/bash
+#SBATCH -J PI-4CPU
+#SBATCH --time=01:00:00         # Walltime
+#SBATCH --mem-per-cpu=1         # memory/cpu
+#SBATCH --ntasks=4      # MPI processes
+#SBATCH --output=4cpuslurm-%j.out
 
 ./y-cruncher skip-warnings bench 100m
 EOF

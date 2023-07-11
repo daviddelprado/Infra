@@ -32,5 +32,5 @@ cp /shared/config/nodes.conf /etc/slurm-llnl/nodes.conf
 cp /shared/config/partitions.conf /etc/slurm-llnl/partitions.conf
 cp /shared/config/munge.key /etc/munge/munge.key
 chown munge.munge /etc/munge/munge.key
-service munge start
+service munge restart
 service slurmd start
